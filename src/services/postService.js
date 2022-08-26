@@ -1,4 +1,4 @@
-const { BlogPost, PostCategory, Category, sequelize } = require('../database/models');
+const { BlogPost, PostCategory, Category, User, sequelize } = require('../database/models');
 
 const verifyCategoryExists = async (categoryIds) => {
   const { rows } = await Category.findAndCountAll({
@@ -38,7 +38,27 @@ const create = async (postInfo, userId) => {
   return transactionResult;
 };
 
+const getAll = async () => {
+  const posts = await BlogPost.findAll({
+    include: [{
+        model: User,
+        as: 'user',
+        attributes: {
+          exclude: ['password'],
+        },
+      }, {
+        model: Category,
+        as: 'categories',
+        through: { attributes: [] },
+    },
+    ],
+  });
+
+  return posts;
+};
+
 module.exports = {
   create,
   verifyCategoryExists,
+  getAll,
 };
