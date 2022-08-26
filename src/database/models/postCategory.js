@@ -11,8 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       foreingKey: true,
     }},
     {
-      updatedAt: false,
-      underscored: true,
+      timestamps: false,
       tableName: 'PostCategories',
     });
   
