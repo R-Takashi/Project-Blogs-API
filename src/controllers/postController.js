@@ -41,7 +41,26 @@ const getAll = async (req, res) => {
   }
 };
 
+const getById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const post = await postService.getById(id);
+
+    if (post.message) {
+      return res.status(404).json(post);
+    }
+
+    return res.status(200).json(post);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: 'Server Error', error: err.message });
+  }
+};
+
 module.exports = {
   create,
   getAll,
+  getById,
 };
