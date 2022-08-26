@@ -13,7 +13,7 @@ const login = async (req, res) => {
       return res.status(400).json(user);
     }
 
-    const token = jwt.sign({ email, password }, JWT_SECRET);
+    const token = jwt.sign({ email }, JWT_SECRET);
 
     return res.status(200).json({ token });
   } catch (err) {

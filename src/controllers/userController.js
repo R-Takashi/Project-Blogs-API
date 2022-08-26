@@ -13,7 +13,7 @@ const create = async (req, res) => {
       return res.status(409).json(newUser);
     }
 
-    const token = jwt.sign(userInfo, JWT_SECRET);
+    const token = jwt.sign({ email: userInfo.email }, JWT_SECRET);
 
     return res.status(201).json({ token });
   } catch (err) {
@@ -23,6 +23,19 @@ const create = async (req, res) => {
   }
 };
 
+const getAll = async (req, res) => {
+  try {
+    const users = await userService.getAll();
+
+    return res.status(200).json(users);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: 'Server Error', error: err.message });
+  }
+};
+
 module.exports = {
   create,
+  getAll,
 };
