@@ -14,4 +14,6 @@ postRoute.get('/:id', isAuth.validToken, postController.getById);
 
 postRoute.put('/:id', isAuth.validToken, isValid.validPost, postController.update);
 
+postRoute.delete('/:id', isAuth.validToken, postController.remove);
+
 module.exports = postRoute;

@@ -84,7 +84,9 @@ const verifyAuthorPost = async (postId, userId) => {
     where: { id: postId },
   });
 
-  if (post.userId !== userId) return { message: 'Unauthorized user' };
+  if (!post) return { message: 'Post does not exist', code: 404 };
+
+  if (post.userId !== userId) return { message: 'Unauthorized user', code: 401 };
 
   return true;
 };
@@ -102,6 +104,13 @@ const update = async (postInfo, postId) => {
   return postUpdated;
 };
 
+const remove = async (postId) => {
+  await BlogPost.destroy({
+    where: { id: postId },
+  });
+  return { message: 'Post removed' };
+};
+
 module.exports = {
   create,
   verifyCategoryExists,
@@ -109,4 +118,5 @@ module.exports = {
   getAll,
   getById,
   update,
+  remove,
 };

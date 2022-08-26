@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const postService = require('../services/postService');
 const { User } = require('../database/models');
 
+const ERROR_MESSAGES = 'Server Error';
+
 const { JWT_SECRET } = process.env;
 
 const create = async (req, res) => {
@@ -25,7 +27,7 @@ const create = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .json({ message: 'Server Error', error: err.message });
+      .json({ message: ERROR_MESSAGES, error: err.message });
   }
 };
 
@@ -37,7 +39,7 @@ const getAll = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .json({ message: 'Server Error', error: err.message });
+      .json({ message: ERROR_MESSAGES, error: err.message });
   }
 };
 
@@ -55,7 +57,7 @@ const getById = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .json({ message: 'Server Error', error: err.message });
+      .json({ message: ERROR_MESSAGES, error: err.message });
   }
 };
 
@@ -73,7 +75,7 @@ const update = async (req, res) => {
     const authorPost = await postService.verifyAuthorPost(id, userId);
     
     if (authorPost.message) {
-      return res.status(401).json(authorPost);
+      return res.status(authorPost.code).json({ message: authorPost.message });
     }
     const updatedPost = await postService.update(postUpdate, id);
     
@@ -81,7 +83,31 @@ const update = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .json({ message: 'Server Error', error: err.message });
+      .json({ message: ERROR_MESSAGES, error: err.message });
+  }
+};
+
+const remove = async (req, res) => {
+  const { id } = req.params;
+  const token = req.headers.authorization;
+  
+  const { email } = jwt.verify(token, JWT_SECRET);
+
+  const { dataValues: { id: userId } } = await User.findOne({ where: { email } });
+  
+  try {
+    const authorPost = await postService.verifyAuthorPost(id, userId);
+    
+    if (authorPost.message) {
+      return res.status(authorPost.code).json({ message: authorPost.message });
+    }
+    const removedPost = await postService.remove(id);
+    
+    return res.status(204).json(removedPost);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: ERROR_MESSAGES, error: err.message });
   }
 };
 
@@ -90,4 +116,5 @@ module.exports = {
   getAll,
   getById,
   update,
+  remove,
 };
