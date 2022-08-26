@@ -13,6 +13,8 @@ app.use('/user', routes.userRoute);
 
 app.use('/categories', routes.categoryRoute);
 
+app.use('/post', routes.postRoute);
+
 // É importante exportar a constante `app`,
 // para que possa ser utilizada pelo arquivo `src/server.js`
 module.exports = app;
