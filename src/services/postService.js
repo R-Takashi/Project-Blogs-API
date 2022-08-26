@@ -79,9 +79,34 @@ const getById = async (id) => {
   return post;
 };
 
+const verifyAuthorPost = async (postId, userId) => {
+  const post = await BlogPost.findOne({
+    where: { id: postId },
+  });
+
+  if (post.userId !== userId) return { message: 'Unauthorized user' };
+
+  return true;
+};
+
+const update = async (postInfo, postId) => {
+  const { title, content } = postInfo;
+
+  await BlogPost.update(
+    { title, content },
+    { where: { id: postId } },
+  );
+
+  const postUpdated = await getById(postId);
+
+  return postUpdated;
+};
+
 module.exports = {
   create,
   verifyCategoryExists,
+  verifyAuthorPost,
   getAll,
   getById,
+  update,
 };
