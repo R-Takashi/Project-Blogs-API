@@ -53,8 +53,25 @@ const getById = async (req, res) => {
   }
 };
 
+const remove = async (req, res) => {
+  try {
+    const token = req.headers.authorization;
+
+    const { email } = jwt.verify(token, JWT_SECRET);
+
+    await userService.remove(email);
+
+    return res.status(204).end();
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: 'Server Error', error: err.message });
+  }
+};
+
 module.exports = {
   create,
   getAll,
   getById,
+  remove,
 };

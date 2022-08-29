@@ -32,8 +32,17 @@ const getById = async (id) => {
   return user;
 };
 
+const remove = async (email) => {
+  const { dataValues: { id } } = await User.findOne({ where: { email } });
+
+  await User.destroy({ where: { id } });
+
+  return true;
+};
+
 module.exports = {
   create,
   getAll,
   getById,
+  remove,
 };

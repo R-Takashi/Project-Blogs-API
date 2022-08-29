@@ -12,4 +12,6 @@ userRoute.get('/', isAuth.validToken, userController.getAll);
 
 userRoute.get('/:id', isAuth.validToken, userController.getById);
 
+userRoute.delete('/me', isAuth.validToken, userController.remove);
+
 module.exports = userRoute;
