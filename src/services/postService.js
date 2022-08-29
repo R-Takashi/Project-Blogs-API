@@ -1,4 +1,7 @@
-const { BlogPost, PostCategory, Category, User, sequelize } = require('../database/models');
+const { BlogPost, PostCategory, Category, User,
+  sequelize, Sequelize } = require('../database/models');
+
+const { Op } = Sequelize;
 
 const verifyCategoryExists = async (categoryIds) => {
   const { rows } = await Category.findAndCountAll({
@@ -111,6 +114,28 @@ const remove = async (postId) => {
   return { message: 'Post removed' };
 };
 
+const search = async (q) => {
+  const posts = await BlogPost.findAll({
+    where: {
+      [Op.or]: [{ title: { [Op.like]: `%${q}%` } }, { content: { [Op.like]: `%${q}%` } }],
+    },
+    include: [{
+        model: User,
+        as: 'user',
+        attributes: {
+          exclude: ['password'],
+        },
+      }, {
+        model: Category,
+        as: 'categories',
+        through: { attributes: [] },
+    },
+    ],
+  });
+
+  return posts;
+};
+
 module.exports = {
   create,
   verifyCategoryExists,
@@ -119,4 +144,5 @@ module.exports = {
   getById,
   update,
   remove,
+  search,
 };
